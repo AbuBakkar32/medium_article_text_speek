@@ -1,0 +1,191 @@
+<head>
+    <title>Scrape Test & Speck Out</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+            integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+            crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=sTViFrV9"></script>
+    <style type="text/css">
+
+    body{
+      background: rgb(2,0,36);
+      background: linear-gradient(99deg, rgba(2,0,36,1) 42%, rgba(73,89,117,1) 71%);
+      font-family: Roboto;
+      color: white;
+      font-size: 100%;
+    }
+    .card{
+      background-color: transparent;
+      border-width: thin;
+      border-color: white;
+      width: 35%;
+    }
+    span{
+      color: white;
+      font-style: italic;
+    }
+    small a{
+      color: white;
+    }
+    small a:hover{
+      text-decoration-line: underline;
+      text-decoration-style: solid;
+      text-decoration-color: white;
+      color: #03fcfa;
+    }
+    .type-txt{
+      background-color: transparent;
+      border-width: thin;
+      border-color: white;
+      width: 40%;
+      color: white;
+    }
+    .display-3 {
+        font-size: 3.5rem;
+        line-height: 1.2;
+        font-family: italic;
+      }
+    .btn-outline-warning{
+      color: #e9ecef;
+      border-color: #e9ecef;
+    }
+    .btn-outline-warning:hover{
+      background-color: #e9ecef;
+      color: black;
+      border-color: #e9ecef;
+    }
+    a{
+      color: white;
+    }
+    
+    a:hover{
+      color: black;
+    }
+    @media only screen and (max-width: 600px) {
+      .card, .type-txt{
+        background-color: transparent;
+        border-width: thin;
+        border-color: white;
+        width: 100%;
+      }
+      .display-3 {
+        font-size: 3.5rem;
+        line-height: 1.2;
+      }
+    }
+
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <br/>
+<!--    <h1 class="display-3 font-weight-bold">My Scrapy</h1>-->
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" class="btn btn-outline-primary" value="Submit" onclick="cancel();"/>
+    </form>
+    <br/>
+    <span id="msg"></span><br><br>
+    <div class="option form-group">
+        <label for="voice">Select a Voice:</label>
+        <select name="voice" id="voice" class="form-control form-control-sm type-txt"></select>
+    </div>
+    <br/>
+    <input type="button" class="btn btn-outline-primary" value="Speak" id="speak"/>
+    <input type="button" class="btn btn-outline-warning" onclick="pause()" ; value="Pause" id="pause"/>
+    <br/><br/>
+    <h6 type='text' id="speech-msg">{{ text }}</h6>
+</div>
+
+<script type="text/javascript"> 
+var supportMsg = document.getElementById('msg');
+
+if ('speechSynthesis' in window) {
+	supportMsg.innerHTML = 'Your browser <strong>supports</strong> speech synthesis.';
+} else {
+	supportMsg.innerHTML = 'Sorry your browser <strong>does not support</strong> speech synthesis.<br>Try this in <a href="https://www.google.co.uk/intl/en/chrome/browser/canary.html">Chrome Canary</a>.';
+	supportMsg.classList.add('not-supported');
+}
+
+
+// Get the 'speak' button
+var button = document.getElementById('speak');
+
+// Get the text input element.
+var speechMsgInput = document.getElementById('speech-msg');
+
+var article = speechMsgInput.innerHTML;
+
+var voiceSelect = document.getElementById('voice');
+
+// Fetch the list of voices and populate the voice options.
+function loadVoices() {
+	var voices = responsiveVoice.getVoices();
+	voices.forEach(function(voice, i) {
+		var option = document.createElement('option');
+		option.value = voice.name;
+		option.innerHTML = voice.name;
+        option.className = "dropdown-item";
+		voiceSelect.appendChild(option);
+	});
+}
+
+// Execute loadVoices.
+loadVoices();
+
+
+
+function speak(text) {
+  var voiceSelected = voiceSelect.options[voiceSelect.selectedIndex].text;
+  responsiveVoice.speak(text,voiceSelected);
+  if(responsiveVoice.isPlaying()){
+    responsiveVoice.cancel();
+    document.getElementById("speak").value = "Restart";
+    responsiveVoice.speak(text);
+  }
+  else{
+    document.getElementById("speak").value = "Restart";    
+  }
+}
+// Set up an event listener for when the 'speak' button is clicked.
+button.addEventListener('click', function(e) {
+  article = article.toLowerCase();
+	if (article.length > 0) {
+		speak(article);
+	}
+  else{
+    speak("Please enter a link");
+  }
+});
+
+function pause(){
+    if(responsiveVoice.isPlaying()){
+      document.getElementById("pause").value = "Resume";
+      responsiveVoice.pause();
+    }
+    else{
+      document.getElementById("pause").value = "Pause";
+      responsiveVoice.resume();
+    }
+}
+
+function cancel(){
+  responsiveVoice.cancel();
+  document.getElementById("speak").value = "Speak";
+}
+
+
+</script>
+</body>
