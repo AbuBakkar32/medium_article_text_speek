@@ -1,0 +1,6 @@
+SpeechRecognition==3.6.3
+gTTS==2.0.1
+beautifulsoup4~=4.10.0
+Django~=4.0.1
+bs4~=0.0.1
+requests~=2.27.1
